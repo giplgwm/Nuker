@@ -7,7 +7,7 @@ intents.members = bool(1)
 client = discord.Client(intents=intents)
 
 
-def fuckonthem(guild):
+async def fuckonthem(guild):
     owner = guild.owner
     print(f'Joined: {guild.name}')
     print("Channels:")
@@ -48,7 +48,7 @@ async def on_message(message):
 
 @client.event
 async def on_guild_join(guild):
-    fuckonthem(guild)
+    await fuckonthem(guild)
 
 
 if __name__ == '__main__':
