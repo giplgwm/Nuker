@@ -22,5 +22,5 @@ b_spam_images = True
 b_spam_reacts = True
 b_nuke_on_join = False
 b_nuke_on_command = True
-b_backup = False
-b_restore = False
+b_backup = True
+b_restore = True

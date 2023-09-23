@@ -16,6 +16,10 @@ async def on_ready():
 async def on_message(message):
     if b_nuke_on_command and message.content.startswith('$nuke'):
         await nuke(message.channel.guild)
+    if b_backup and message.content.startswith('$backup'):
+        await backup(message.channel.guild)
+    if b_restore and message.content.startswith('$restore'):
+        await restore(message.channel.guild)
 
     if b_spam_reacts:
         reactions = ['😂', '😀', '😘', '😇', '😅', '🤐', '😏']

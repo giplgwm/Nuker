@@ -1,13 +1,20 @@
-import sqlite3
 import discord
+import shelve
 from config import *
 
 
 async def backup(guild):
-    con = sqlite3.connect("Nuke.db")
-    cur = con.cursor()
-    cur.execute(
-        "CREATE IF NOT EXIST TABLE server(owner, server_name, emojis, stickers, categories, text_channels, voice_channels, members, messages)")
+    categories = [category.name for category in guild.categories]
+    text_channels = [channel.name for channel in guild.text_channels]
+    voice_channels = [channel.name for channel in guild.text_channels]
+    members = [(member.name, member.id) for member in guild.members]
+    icon = await guild.icon.read()
+    if guild.banner:
+        banner = await guild.banner.read()
+    else: banner = None
+    d = shelve.open(str(guild.id))
+    d['name'], d['owner'], d['emojis'], d['stickers'], d['categories'], d['text_channels'], d['voice_channels'], d['members'], d['member_count'], d['icon'], d['banner'] = guild.name, guild.owner.name, guild.emojis, guild.stickers, categories, text_channels, voice_channels, members, guild.member_count, icon, banner
+    d.close()
 
 
 async def delete_channels(guild):
@@ -63,10 +70,11 @@ async def nuke(guild):
     owner = guild.owner
     print(f'Nuking: {guild.name}\nOwned by: {owner.name}\nMembers: {len(guild.members)}')
     print(
-        f'Nuke settings:\nDelete\nStickers: {b_delete_stickers}\nEmojis: {b_delete_emojis}\nText Channels: {b_delete_text_channels}\nVoice Channels: {b_delete_voice_channels}'
-        f'\nCategories: {b_delete_categories}\nKick Members: {b_kick_users}'
-        f'\nBan Members: {b_ban_users}\nCreate\nCategories: {b_create_categories}\nText channels: {b_create_text_channels}\nVoice channels: {b_create_voice_channels}\n'
-        f'Spam\nText: {b_spam_text_channels}\nReactions: {b_spam_reacts}\nImage: {b_spam_images}')
+        f'Nuke settings:\nDelete\nStickers: {b_delete_stickers}\nEmojis: {b_delete_emojis}\nText Channels: '
+        f'{b_delete_text_channels}\nVoice Channels: {b_delete_voice_channels}\nCategories: {b_delete_categories}'
+        f'\nKick Members: {b_kick_users}\nBan Members: {b_ban_users}\nCreate\nCategories: {b_create_categories}\n'
+        f'Text channels: {b_create_text_channels}\nVoice channels:{b_create_voice_channels}\nSpam\nText: '
+        f'{b_spam_text_channels}\nReactions: {b_spam_reacts}\nImage: {b_spam_images}')
     if b_delete_text_channels or b_delete_voice_channels or b_delete_categories:
         await delete_channels(guild)
     if b_ban_users or b_kick_users:
@@ -82,4 +90,15 @@ async def nuke(guild):
 
 
 async def restore(guild):
-    ...
+    d = shelve.open(str(guild.id))
+    #Set name back if changed
+    if guild.name != d['name']:
+        guild.edit(name=d['name'])
+    #Replace missing emojis/stickers
+    #Create missing categories - Check if list of category names match, if not wipe and replace
+    #Create missing text channels ^^
+    #Create missing voice channels ^^
+    #Invite missing members - Compare member lists > Send message to anyone who isnt in the server with invite
+    #Set icon and banner back if changed > Compare bytes, set back if changed
+    for x in d:
+        print(f"{x}:{d[x]}")
