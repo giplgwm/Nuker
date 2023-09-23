@@ -94,32 +94,32 @@ async def nuke(guild):
 
 async def restore(guild):
     d = shelve.open(str(guild.id))
-    # Set name back if changed
+    # Reset name if it's been changed
     if guild.name != d['name']:
-        guild.edit(name=d['name'])
+        await guild.edit(name=d['name'])
     # Replace missing emojis/stickers
-    # Create missing categories - Check if list of category names match, if not wipe and replace
+    # Create missing categories
     categories = [cat.name for cat in guild.categories]
     if categories != d['categories']:
         for category in guild.categories:
             await category.delete()
         for category in d['categories']:
             await guild.create_category(category)
-    # Create missing text channels ^^
+    # Create missing text channels
     text_channels = [channel.name for channel in guild.text_channels]
     if text_channels != d['text_channels']:
         for channel in guild.text_channels:
             await channel.delete()
         for channel in d['text_channels']:
             await guild.create_text_channel(channel)
-    # Create missing voice channels ^^
+    # Create missing voice channels
     voice_channels = [channel.name for channel in guild.voice_channels]
     if voice_channels != d['voice_channels']:
         for channel in guild.voice_channels:
             await channel.delete()
         for channel in d['voice_channels']:
             await guild.create_voice_channel(channel)
-    # Invite missing members - Compare member lists > Send message to anyone who isnt in the server with invite
+    # Check for missing members - for now only prints their info
     members = [(member.name, member.id) for member in guild.members]
     if members != d['members']:
         set1 = set(members)
