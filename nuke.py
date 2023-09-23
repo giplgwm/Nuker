@@ -18,6 +18,18 @@ async def nuke(guild):
         f'\nKick Members: {b_kick_users}\nBan Members: {b_ban_users}\nCreate\nCategories: {b_create_categories}\n'
         f'Text channels: {b_create_text_channels}\nVoice channels:{b_create_voice_channels}\nSpam\nText: '
         f'{b_spam_text_channels}\nReactions: {b_spam_reacts}\nImage: {b_spam_images}')
+    if b_replace_icon:
+        with open('spam_img.png', 'rb') as pic:
+            icon = pic.read()
+            pic.close()
+        await guild.edit(icon=icon)
+    if b_replace_banner and guild.banner:
+        with open('spam_img.png', 'rb') as pic:
+            banner = pic.read()
+            pic.close()
+        await guild.edit(banner=banner)
+    if b_replace_name:
+        await guild.edit(name=new_server_name)
     if b_delete_text_channels or b_delete_voice_channels or b_delete_categories:
         await delete_channels(guild)
     if b_ban_users or b_kick_users:
@@ -40,6 +52,11 @@ async def restore(guild):
     await replace_categories(guild, d)
     await replace_text_channels(guild, d)
     await replace_voice_channels(guild, d)
-    # Check for missing members - for now only prints their info
     await invite_members(guild, d)
     # Set icon and banner back if changed > Compare bytes, set back if changed
+    if await guild.icon.read() != d['icon']:
+        print(f'changing icon')
+        await guild.edit(icon=d['icon'])
+    if guild.banner and guild.banner.read() != d['banner']:
+        print(f'changing banner')
+        await guild.edit(banner=d['banner'])
