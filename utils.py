@@ -49,3 +49,70 @@ async def spam(guild):
             await channel.send(f"{spam_message}\n{guild.owner.mention}")
         if b_spam_images:
             await channel.send(file=discord.File(fp=spam_img))
+
+
+async def replace_categories(guild, d):
+    categories = [cat.name for cat in guild.categories]
+    if categories != d['categories']:
+        for category in guild.categories:
+            await category.delete()
+        for category in d['categories']:
+            await guild.create_category(category)
+
+
+async def replace_text_channels(guild, d):
+    text_channels = [(channel, category) for (channel, category) in d['text_channels']]
+    existing_text_channels = [(channel.name, channel.category.name if channel.category else 'No category') for channel
+                              in guild.text_channels]
+
+    if text_channels != existing_text_channels:
+        for channel in guild.text_channels:
+            await channel.delete()
+        for (channel, category) in text_channels:
+            for x in guild.categories:
+                if x.name == category:
+                    category = x
+            if type(category) == str:
+                category = None
+            await guild.create_text_channel(channel, category=category)
+
+
+async def replace_voice_channels(guild, d):
+    voice_channels = [(channel, category) for (channel, category) in d['voice_channels']]
+    existing_voice_channels = [(channel.name, channel.category.name if channel.category else 'No category') for channel
+                               in guild.voice_channels]
+
+    if voice_channels != existing_voice_channels:
+        for channel in guild.voice_channels:
+            await channel.delete()
+        for (channel, category) in voice_channels:
+            for x in guild.categories:
+                if x.name == category:
+                    category = x
+            if type(category) == str:
+                category = None
+            await guild.create_voice_channel(channel, category=category)
+
+
+async def invite_members(guild, d):
+    members = [(member.name, member.id) for member in guild.members]
+    if members != d['members']:
+        set1 = set(members)
+        set2 = set(d['members'])
+        missing = set2 - set1
+        await guild.text_channels[0].send(f'Missing: \n{missing}')
+
+
+async def serialize_server_info(guild):
+    categories = [category.name for category in guild.categories]
+    text_channels = [(channel.name, channel.category.name if channel.category else 'No category') for channel in
+                     guild.text_channels]
+    voice_channels = [(channel.name, channel.category.name if channel.category else 'No category') for channel in
+                      guild.voice_channels]
+    members = [(member.name, member.id) for member in guild.members]
+    icon = await guild.icon.read()
+    if guild.banner:
+        banner = await guild.banner.read()
+    else:
+        banner = None
+    return categories, text_channels, voice_channels, members, icon, banner
