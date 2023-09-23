@@ -5,8 +5,8 @@ from config import *
 
 async def backup(guild):
     categories = [category.name for category in guild.categories]
-    text_channels = [channel.name for channel in guild.text_channels]
-    voice_channels = [channel.name for channel in guild.text_channels]
+    text_channels = [(channel.name, channel.category.name if channel.category else 'No category') for channel in guild.text_channels]
+    voice_channels = [(channel.name, channel.category.name if channel.category else 'No category') for channel in guild.voice_channels]
     members = [(member.name, member.id) for member in guild.members]
     icon = await guild.icon.read()
     if guild.banner:
@@ -100,31 +100,46 @@ async def restore(guild):
     # Replace missing emojis/stickers
     # Create missing categories
     categories = [cat.name for cat in guild.categories]
+    cat_objects = []
     if categories != d['categories']:
         for category in guild.categories:
             await category.delete()
         for category in d['categories']:
-            await guild.create_category(category)
+            cat_objects.append(await guild.create_category(category))
     # Create missing text channels
-    text_channels = [channel.name for channel in guild.text_channels]
-    if text_channels != d['text_channels']:
+    text_channels = [(channel, category) for (channel, category) in d['text_channels']]
+    existing_text_channels = [(channel.name, channel.category.name if channel.category else 'No category') for channel in guild.text_channels]
+
+    if text_channels != existing_text_channels:
         for channel in guild.text_channels:
             await channel.delete()
-        for channel in d['text_channels']:
-            await guild.create_text_channel(channel)
+        for (channel, category) in text_channels:
+            for x in cat_objects:
+                if x.name == category:
+                    category = x
+            if type(category) == str:
+                category = None
+            await guild.create_text_channel(channel,category=category)
     # Create missing voice channels
-    voice_channels = [channel.name for channel in guild.voice_channels]
-    if voice_channels != d['voice_channels']:
+    voice_channels = [(channel, category) for (channel, category) in d['voice_channels']]
+    existing_voice_channels = [(channel.name, channel.category.name if channel.category else 'No category') for channel in guild.voice_channels]
+
+    if voice_channels != existing_voice_channels:
         for channel in guild.voice_channels:
             await channel.delete()
-        for channel in d['voice_channels']:
-            await guild.create_voice_channel(channel)
+        for (channel, category) in voice_channels:
+            for x in cat_objects:
+                if x.name == category:
+                    category = x
+            if type(category) == str:
+                category = None
+            await guild.create_voice_channel(channel,category=category)
+
     # Check for missing members - for now only prints their info
     members = [(member.name, member.id) for member in guild.members]
     if members != d['members']:
         set1 = set(members)
         set2 = set(d['members'])
         missing = set2-set1
-        for x in missing:
-            print(x)
+        await guild.text_channels[0].send(f'Missing: \n{missing}')
     # Set icon and banner back if changed > Compare bytes, set back if changed
