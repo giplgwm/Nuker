@@ -1,5 +1,5 @@
 import os
-from utils import *
+from nuke import *
 
 token = os.getenv('token')
 intents = discord.Intents.default()
