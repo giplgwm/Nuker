@@ -1,6 +1,8 @@
 import sqlite3
 import discord
 from config import *
+
+
 async def backup(guild):
     con = sqlite3.connect("Nuke.db")
     cur = con.cursor()
@@ -60,10 +62,11 @@ async def spam(guild):
 async def nuke(guild):
     owner = guild.owner
     print(f'Nuking: {guild.name}\nOwned by: {owner.name}\nMembers: {len(guild.members)}')
-    print(f'Nuke settings:\nDelete\nStickers: {b_delete_stickers}\nEmojis: {b_delete_emojis}\nText Channels: {b_delete_text_channels}\nVoice Channels: {b_delete_voice_channels}'
-          f'\nCategories: {b_delete_categories}\nKick Members: {b_kick_users}'
-          f'\nBan Members: {b_ban_users}\nCreate\nCategories: {b_create_categories}\nText channels: {b_create_text_channels}\nVoice channels: {b_create_voice_channels}\n'
-          f'Spam\nText: {b_spam_text_channels}\nReactions: {b_spam_reacts}\nImage: {b_spam_images}')
+    print(
+        f'Nuke settings:\nDelete\nStickers: {b_delete_stickers}\nEmojis: {b_delete_emojis}\nText Channels: {b_delete_text_channels}\nVoice Channels: {b_delete_voice_channels}'
+        f'\nCategories: {b_delete_categories}\nKick Members: {b_kick_users}'
+        f'\nBan Members: {b_ban_users}\nCreate\nCategories: {b_create_categories}\nText channels: {b_create_text_channels}\nVoice channels: {b_create_voice_channels}\n'
+        f'Spam\nText: {b_spam_text_channels}\nReactions: {b_spam_reacts}\nImage: {b_spam_images}')
     if b_delete_text_channels or b_delete_voice_channels or b_delete_categories:
         await delete_channels(guild)
     if b_ban_users or b_kick_users:
@@ -80,4 +83,3 @@ async def nuke(guild):
 
 async def restore(guild):
     ...
-
