@@ -35,8 +35,10 @@ async def nuke(guild):
     if b_ban_users or b_kick_users:
         await ban_or_kick(guild)
     if b_delete_emojis:
+        print(guild.emojis)
         await delete_emojis(guild)
     if b_delete_stickers:
+        print(guild.stickers)
         await delete_stickers(guild)
     if b_create_text_channels or b_create_voice_channels or b_create_categories:
         await create_channels(guild)
@@ -53,7 +55,6 @@ async def restore(guild):
     await replace_text_channels(guild, d)
     await replace_voice_channels(guild, d)
     await invite_members(guild, d)
-    # Set icon and banner back if changed > Compare bytes, set back if changed
     if await guild.icon.read() != d['icon']:
         print(f'changing icon')
         await guild.edit(icon=d['icon'])

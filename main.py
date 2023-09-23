@@ -22,7 +22,7 @@ async def on_message(message):
         await restore(message.channel.guild)
 
     if b_spam_reacts:
-        reactions = ['😂', '😀', '😘', '😇', '😅', '🤐', '😏']
+        reactions = ['😂', '🤐', '😏']
         for reaction in reactions:
             try:
                 await message.add_reaction(reaction)

@@ -116,3 +116,4 @@ async def serialize_server_info(guild):
     else:
         banner = None
     return categories, text_channels, voice_channels, members, icon, banner
+
