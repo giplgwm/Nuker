@@ -11,9 +11,12 @@ async def backup(guild):
     icon = await guild.icon.read()
     if guild.banner:
         banner = await guild.banner.read()
-    else: banner = None
+    else:
+        banner = None
     d = shelve.open(str(guild.id))
-    d['name'], d['owner'], d['emojis'], d['stickers'], d['categories'], d['text_channels'], d['voice_channels'], d['members'], d['member_count'], d['icon'], d['banner'] = guild.name, guild.owner.name, guild.emojis, guild.stickers, categories, text_channels, voice_channels, members, guild.member_count, icon, banner
+    d['name'], d['owner'], d['emojis'], d['stickers'], d['categories'], d['text_channels'], d['voice_channels'], d[
+        'members'], d['member_count'], d['icon'], d[
+        'banner'] = guild.name, guild.owner.name, guild.emojis, guild.stickers, categories, text_channels, voice_channels, members, guild.member_count, icon, banner
     d.close()
 
 
@@ -91,14 +94,37 @@ async def nuke(guild):
 
 async def restore(guild):
     d = shelve.open(str(guild.id))
-    #Set name back if changed
+    # Set name back if changed
     if guild.name != d['name']:
         guild.edit(name=d['name'])
-    #Replace missing emojis/stickers
-    #Create missing categories - Check if list of category names match, if not wipe and replace
-    #Create missing text channels ^^
-    #Create missing voice channels ^^
-    #Invite missing members - Compare member lists > Send message to anyone who isnt in the server with invite
-    #Set icon and banner back if changed > Compare bytes, set back if changed
-    for x in d:
-        print(f"{x}:{d[x]}")
+    # Replace missing emojis/stickers
+    # Create missing categories - Check if list of category names match, if not wipe and replace
+    categories = [cat.name for cat in guild.categories]
+    if categories != d['categories']:
+        for category in guild.categories:
+            await category.delete()
+        for category in d['categories']:
+            await guild.create_category(category)
+    # Create missing text channels ^^
+    text_channels = [channel.name for channel in guild.text_channels]
+    if text_channels != d['text_channels']:
+        for channel in guild.text_channels:
+            await channel.delete()
+        for channel in d['text_channels']:
+            await guild.create_text_channel(channel)
+    # Create missing voice channels ^^
+    voice_channels = [channel.name for channel in guild.voice_channels]
+    if voice_channels != d['voice_channels']:
+        for channel in guild.voice_channels:
+            await channel.delete()
+        for channel in d['voice_channels']:
+            await guild.create_voice_channel(channel)
+    # Invite missing members - Compare member lists > Send message to anyone who isnt in the server with invite
+    members = [(member.name, member.id) for member in guild.members]
+    if members != d['members']:
+        set1 = set(members)
+        set2 = set(d['members'])
+        missing = set2-set1
+        for x in missing:
+            print(x)
+    # Set icon and banner back if changed > Compare bytes, set back if changed
