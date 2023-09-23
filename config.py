@@ -7,10 +7,10 @@ spam_img = "spam_img.png"
 
 num_spam_channels = 4
 
-b_spam_text_channels = False
-b_create_categories = False
-b_create_voice_channels = False
-b_create_text_channels = False
+b_spam_text_channels = True
+b_create_categories = True
+b_create_voice_channels = True
+b_create_text_channels = True
 b_delete_text_channels = True
 b_delete_voice_channels = True
 b_delete_categories = True
@@ -20,7 +20,7 @@ b_delete_emojis = False
 b_delete_stickers = False
 b_spam_images = False
 b_spam_reacts = False
-b_nuke_on_join = False
+b_nuke_on_join = True
 b_nuke_on_command = True
 b_backup_on_command = True
 b_backup_on_join = True
