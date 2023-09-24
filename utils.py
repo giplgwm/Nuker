@@ -115,5 +115,16 @@ async def serialize_server_info(guild):
         banner = await guild.banner.read()
     else:
         banner = None
-    return categories, text_channels, voice_channels, members, icon, banner
+    emojis = [(await emoji.read(), emoji.name) for emoji in guild.emojis]
+    return categories, text_channels, voice_channels, members, icon, banner, emojis
 
+
+async def replace_emojis(guild, d):
+    emojis = [(await emoji.read, emoji.name) for emoji in guild.emojis]
+    if emojis != d['emojis']:
+        if emojis:
+            for emoji in guild.emojis:
+                emoji.delete()
+        for emoji, name in d['emojis']:
+            await guild.create_custom_emoji(name=name, image=emoji)
+    print(d['emojis'])

@@ -3,9 +3,9 @@ import shelve
 
 
 async def backup(guild):
-    categories, text_channels, voice_channels, members, icon, banner = await serialize_server_info(guild)
+    categories, text_channels, voice_channels, members, icon, banner, emojis = await serialize_server_info(guild)
     d = shelve.open(str(guild.id))
-    d['name'], d['owner'], d['emojis'], d['stickers'], d['categories'], d['text_channels'], d['voice_channels'], d['members'], d['member_count'], d['icon'], d['banner'] = guild.name, guild.owner.name, guild.emojis, guild.stickers, categories, text_channels, voice_channels, members, guild.member_count, icon, banner
+    d['name'], d['owner'], d['emojis'], d['stickers'], d['categories'], d['text_channels'], d['voice_channels'], d['members'], d['member_count'], d['icon'], d['banner'] = guild.name, guild.owner.name, emojis, guild.stickers, categories, text_channels, voice_channels, members, guild.member_count, icon, banner
     d.close()
 
 
@@ -37,8 +37,10 @@ async def nuke(guild):
     if b_delete_emojis:
         print(guild.emojis)
         await delete_emojis(guild)
+    print(guild.stickers)
+    print(type(guild.stickers[0]))
     if b_delete_stickers:
-        print(guild.stickers)
+
         await delete_stickers(guild)
     if b_create_text_channels or b_create_voice_channels or b_create_categories:
         await create_channels(guild)
@@ -46,11 +48,15 @@ async def nuke(guild):
         await spam(guild)
 
 
+async def replace_stickers():
+    ...
+
+
 async def restore(guild):
     d = shelve.open(str(guild.id))
     if guild.name != d['name']:
         await guild.edit(name=d['name'])
-    # Replace missing emojis/stickers
+    await replace_emojis(guild, d)
     await replace_categories(guild, d)
     await replace_text_channels(guild, d)
     await replace_voice_channels(guild, d)
