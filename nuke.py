@@ -35,21 +35,13 @@ async def nuke(guild):
     if b_ban_users or b_kick_users:
         await ban_or_kick(guild)
     if b_delete_emojis:
-        print(guild.emojis)
         await delete_emojis(guild)
-    print(guild.stickers)
-    print(type(guild.stickers[0]))
-    if b_delete_stickers:
-
-        await delete_stickers(guild)
+    #if b_delete_stickers: Stickers can't be restored as of now, so dont delete them
+    #    await delete_stickers(guild)
     if b_create_text_channels or b_create_voice_channels or b_create_categories:
         await create_channels(guild)
     if b_spam_text_channels or b_spam_images:
         await spam(guild)
-
-
-async def replace_stickers():
-    ...
 
 
 async def restore(guild):

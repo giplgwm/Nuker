@@ -1,3 +1,5 @@
+import shelve
+
 import discord
 from config import *
 
@@ -94,7 +96,7 @@ async def replace_voice_channels(guild, d):
             await guild.create_voice_channel(channel, category=category)
 
 
-async def invite_members(guild, d):
+async def invite_members(guild, d: shelve.Shelf):
     members = [(member.name, member.id) for member in guild.members]
     if members != d['members']:
         set1 = set(members)
