@@ -1,5 +1,4 @@
 from utils import *
-import shelve
 
 
 async def backup(guild):
