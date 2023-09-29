@@ -6,11 +6,6 @@ intents.members, intents.message_content = True, True
 bot = commands.Bot(command_prefix='$', intents=intents)
 
 
-@bot.event
-async def on_ready():
-    print(f'We have logged in as {bot.user}')
-
-
 @bot.command(name='nuke')
 async def nuke_command(ctx):
     if b_nuke_on_command:
