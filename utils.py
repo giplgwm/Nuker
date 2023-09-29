@@ -130,4 +130,3 @@ async def replace_emojis(guild, d):
                 emoji.delete()
         for emoji, name in d['emojis']:
             await guild.create_custom_emoji(name=name, image=emoji)
-    print(d['emojis'])
