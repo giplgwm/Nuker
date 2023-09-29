@@ -4,7 +4,6 @@ voice_channel_name = "spam_voice"
 category_name = "spam_category"
 spam_message = "get rekt"
 spam_img = "spam_img.png"
-payment_link = ''   # Initialized here so that we can reference it in utils without importing os in this file.
 num_spam_channels = 4
 
 # Nuke settings

