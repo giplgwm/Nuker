@@ -1,5 +1,7 @@
 from nuke import *
 import os
+from discord.ext import commands
+
 token, payment_link = os.getenv('token'), os.getenv('stripe_link')
 intents = discord.Intents.default()
 intents.members, intents.message_content = True, True
