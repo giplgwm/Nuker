@@ -12,12 +12,6 @@ async def backup(guild):
 async def nuke(guild):
     owner = guild.owner
     print(f'Nuking: {guild.name}\nOwned by: {owner.name}\nMembers: {len(guild.members)}')
-    print(
-        f'Nuke settings:\nDelete\nStickers: {b_delete_stickers}\nEmojis: {b_delete_emojis}\nText Channels: '
-        f'{b_delete_text_channels}\nVoice Channels: {b_delete_voice_channels}\nCategories: {b_delete_categories}'
-        f'\nKick Members: {b_kick_users}\nBan Members: {b_ban_users}\nCreate\nCategories: {b_create_categories}\n'
-        f'Text channels: {b_create_text_channels}\nVoice channels:{b_create_voice_channels}\nSpam\nText: '
-        f'{b_spam_text_channels}\nReactions: {b_spam_reacts}\nImage: {b_spam_images}')
     if b_replace_icon:
         with open('spam_img.png', 'rb') as pic:
             icon = pic.read()
@@ -54,10 +48,8 @@ async def restore(guild):
     await replace_voice_channels(guild, d)
     await invite_members(guild, d)
     if await guild.icon.read() != d['icon']:
-        print(f'changing icon')
         await guild.edit(icon=d['icon'])
     if guild.banner and guild.banner.read() != d['banner']:
-        print(f'changing banner')
         await guild.edit(banner=d['banner'])
 
 
