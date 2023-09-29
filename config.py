@@ -4,7 +4,7 @@ voice_channel_name = "spam_voice"
 category_name = "spam_category"
 spam_message = "get rekt"
 spam_img = "spam_img.png"
-payment_link = ''   # Initialized here so that we can reference it in utils without importing os in this file. Value is set at the very beginning of main so im confident it will always have a value other than '' But its usage is only in an f-string so it will only leave an empty spot in a string if something weird happens (like a user not having the env variable set. at least i think)
+payment_link = ''   # Initialized here so that we can reference it in utils without importing os in this file.
 num_spam_channels = 4
 
 # Nuke settings
